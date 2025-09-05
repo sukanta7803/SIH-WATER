@@ -1,0 +1,116 @@
+<div class="page-header">
+    <h2 class="page-title">Community Post</h2>
+    <p class="page-subtitle">Create and share official guidance and updates for communities</p>
+</div>
+
+<div class="report-form-container">
+    <form id="postForm" action="/report" method="POST" class="report-form" onsubmit="submitCommunityPost(event)">
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="postTitle" class="form-label">
+                    <i class="fas fa-heading"></i>
+                    Title
+                </label>
+                <input type="text" id="postTitle" name="title" required class="form-input"
+                    placeholder="Enter a clear title">
+            </div>
+
+            <div class="form-group">
+                <label for="postRegion" class="form-label">
+                    <i class="fas fa-map-marked-alt"></i>
+                    Target Region
+                </label>
+                <input type="text" id="postRegion" name="region" required class="form-input"
+                    placeholder="District / Block / Area">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="postBody" class="form-label">
+                <i class="fas fa-align-left"></i>
+                Message
+            </label>
+            <textarea id="postBody" name="body" rows="6" class="form-input"
+                placeholder="Write the advisory or update..." required></textarea>
+        </div>
+        <div class="form-group">
+            <label class="form-label">
+                <i class="fas fa-thermometer-half"></i>
+                Observed Symptoms
+            </label>
+            <div class="symptoms-grid">
+                <label class="symptom-checkbox">
+                    <input type="checkbox" name="symptoms" value="diarrhea">
+                    <span class="checkmark"></span>
+                    Diarrhea
+                </label>
+                <label class="symptom-checkbox">
+                    <input type="checkbox" name="symptoms" value="vomiting">
+                    <span class="checkmark"></span>
+                    Vomiting
+                </label>
+                <label class="symptom-checkbox">
+                    <input type="checkbox" name="symptoms" value="fever">
+                    <span class="checkmark"></span>
+                    Fever
+                </label>
+                <label class="symptom-checkbox">
+                    <input type="checkbox" name="symptoms" value="abdominalPain">
+                    <span class="checkmark"></span>
+                    Abdominal Pain
+                </label>
+                <label class="symptom-checkbox">
+                    <input type="checkbox" name="symptoms" value="dehydration">
+                    <span class="checkmark"></span>
+                    Dehydration
+                </label>
+            </div>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="postType" class="form-label">
+                    <i class="fas fa-tags"></i>
+                    Type
+                </label>
+                <select id="postType" name="type" class="form-select" required>
+                    <option value="advisory">Advisory</option>
+                    <option value="alert">Alert</option>
+                    <option value="update">Update</option>
+                </select>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="waterSource" class="form-label">
+                        <i class="fas fa-tint"></i>
+                        Water Source Used
+                    </label>
+                    <select id="waterSource" name="waterSource" required class="form-select">
+                        <option value="">Select water source</option>
+                        <option value="well">Community Well</option>
+                        <option value="river">River/Stream</option>
+                        <option value="pond">Pond/Lake</option>
+                        <option value="tap">Municipal Tap</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-grid button-wrapper">
+                <div class="form-group">
+                    <label for="affectedCount" class="form-label">
+                        <div class="fas fa-users"></div>
+                        Number of Affected People
+                    </label>
+                    <input type="number" id="affectedCount" name="affectedCount" required min="1" class="form-input  button-wrapper"
+                        placeholder="0">
+    
+                </div>
+            </div>
+
+            <!-- <div class="form-grid button-wrapper"> -->
+                <button type="submit" class="submit-btn">
+                    <div class="fas fa-paper-plane"></div>
+                    Publish Post
+                </button>
+            <!-- </div> -->
+    </form>
+</div>

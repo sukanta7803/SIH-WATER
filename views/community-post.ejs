@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/css/community-post.css">
+</head>
+
+<body>
+    <div class="post-head">
+        <h1>Community Posts</h1>
+    </div>
+
+    <div class="all-posts">
+        <% for (const e of thePosts) { %>
+            <div class="cardContent">
+
+                <div class="postCard">
+                    <div class="postTitle">
+                        <h2>
+                            <%= e.title %>
+                        </h2>
+                        <div class="postType">
+                            <p class="yellow">
+                                <%= e.type %>
+                            </p>
+                        </div>
+                        <div class="region">
+                            <p>Region: <%= e.region %>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="desc">
+                        <%= e.body %>
+                    </div>
+
+                    <div class="tags">
+                        <div class="symtoms">
+                            <h3>Symtoms: </h3>
+                            <div class="symtomBox">
+                                <% for(let i=0; i < e.symptoms.length; i++){ %>
+                                    <div class="stags">
+                                        <%= e.symptoms[i] %>
+                                    </div>
+                                    <% } %>
+                            </div>
+                        </div>
+                        <div class="water-source">
+                            <h3>Main Water Source: </h3>
+                            <p>
+                                <%= e.waterSource %>
+                            </p>
+                        </div>
+                        <div class="affected-count">
+                            <h3>Total affected Count: </h3>
+                            <p>
+                                <%= e.affectedCount %>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="resolved">
+                <button>
+                    Resolved
+                </button>
+            </div>
+        <% } %>
+    </div>
+</body>
+
+</html>

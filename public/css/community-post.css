@@ -1,0 +1,141 @@
+.red{
+    background-color: rgba(249, 41, 41, 0.2);
+    color: rgb(249, 41, 41, 0.8);
+}
+
+.yellow{
+    background-color: rgb(210, 235, 27, 0.2);
+    color: rgba(188, 212, 6, 0.9);
+}
+
+.green{
+    background-color: rgba(38, 255, 0, 0.2);
+    color: rgba(33, 157, 12, 0.516);
+}
+.all-posts{
+    /* border: 2px solid black; */
+    border-radius: 20px;
+    height: 65vh;
+    margin: 20px;
+    padding: 20px;
+    background-color: white;
+    padding-left: 50px;
+    padding-right: 50px;
+    overflow: scroll;
+}
+
+.cardContent{
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 2px 3px 10px grey;
+}
+
+.postCard{
+    padding: 30px;
+    margin-top: 40px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.postTitle{
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.region{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: grey;
+    font-style: italic;
+    /* border: 2px solid black; */
+    width: 20px;
+}
+
+.postType{
+    display: flex;
+    align-items: center;
+    /* justify-content: center; */
+    
+}
+
+.postType p{
+    margin-top: 20px;
+    /* background-color: rgb(249, 41, 41, 0.2); */
+    border-radius: 20px;
+    width: 90px;
+    text-align: center;
+    padding: 5px 8px 8px 5px;
+    font-weight: bolder;
+}
+
+.desc{
+    /* border: 1px solid black; */
+    width: 30vw;
+    text-align: center;
+}
+
+.tags{
+    /* border: 2px solid black; */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.symtoms{
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.symtomBox{
+    display: flex;
+    width: 10vw;
+    /* border: 2px solid red; */
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.stags{
+    /* border: 2px solid black; */
+    border-radius: 7px;
+    /* box-shadow: 4px 4px 10px grey; */
+    padding: 8px;
+    text-align: center;
+    font-size: 15px;
+    background-color: rgba(176, 176, 175, 0.5);
+    color: rgba(112, 111, 111, 0.9);
+    font-weight: bolder;
+
+}
+
+.water-source{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.water-source p{
+    /* border: 2px solid black; */
+    padding: 5px;
+}
+.affected-count{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.affected-count p{
+    /* border: 2px solid black; */
+    padding: 5px;
+}
+
+.resolved button{
+
+}
+
+
+
+
+
+
