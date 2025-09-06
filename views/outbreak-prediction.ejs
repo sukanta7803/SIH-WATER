@@ -3,10 +3,10 @@
     <h3 class="card-title">Hotspot Map</h3>
     <% if (mapPath) { %>
       <div class="outbreak-map">
-        <iframe src="<%= mapPath %>" width="100%" height="600" style="border:none;border-radius:0.5rem;box-shadow:0 8px 20px rgba(0,0,0,0.12);"></iframe>
+        <iframe src="<%= mapPath %>" class="prediction-map" title="Outbreak Hotspots"></iframe>
       </div>
     <% } else { %>
-      <div class="alert alert-warning">Map is not available.</div>
+      <div class="alert alert-info">Map is not available.</div>
     <% } %>
   </div>
 </div>
@@ -16,23 +16,30 @@
   <% if ((redzones || []).length === 0) { %>
     <div class="alert alert-info">No data available.</div>
   <% } else { %>
-    <div class="table-responsive" style="overflow-x:auto;">
-      <table class="table table-striped table-bordered" style="width:100%;border-collapse:separate;border-spacing:0;">
+    <div class="table-wrapper prediction-table-wrapper">
+      <table class="prediction-table">
         <thead>
           <tr>
-            <th style="text-align:center;white-space:nowrap;">Outbreak Prediction Percentage</th>
-            <th style="text-align:left;white-space:nowrap;">District Name</th>
-            <th style="text-align:left;white-space:nowrap;">Disease Name</th>
-            <th style="text-align:center;white-space:nowrap;">Date</th>
+            <th>Risk</th>
+            <th>District</th>
+            <th>Disease</th>
+            <th>Date</th>
           </tr>
         </thead>
         <tbody>
-          <% redzones.forEach(function(r){ %>
+          <% redzones.forEach(function(r){
+              const pct = Number(r.percentage || 0);
+              const riskClass = pct >= 70 ? 'high' : (pct >= 40 ? 'medium' : 'low');
+              const dateStr = r.date ? (new Date(r.date)).toLocaleDateString() : (new Date()).toLocaleDateString();
+              const districtClean = (r.district || '').replace(/^[^A-Za-z0-9]+\s*/, '');
+          %>
             <tr>
-              <td style="text-align:center;"><%= r.percentage %> %</td>
-              <td style="text-align:left;"><%= (r.district || '').replace(/^[^A-Za-z0-9]+\s*/, '') %></td>
-              <td style="text-align:left;"><%= r.disease %></td>
-              <td style="text-align:center;"><%= r.date %></td>
+              <td>
+                <span class="risk-badge <%= riskClass %>"><%= pct %>%</span>
+              </td>
+              <td><%= districtClean %></td>
+              <td><%= r.disease %></td>
+              <td><%= dateStr %></td>
             </tr>
           <% }) %>
         </tbody>
