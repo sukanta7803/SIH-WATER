@@ -425,6 +425,16 @@ app.post('/signup', async (req, res) => {
 app.get('/outbreak-prediction', requireLogin, async (req, res) => {
   const language = req.query.lang || 'en';
 
+  // If this is an initial request (non-AJAX), render a loader page first
+  if (!req.xhr && req.headers.accept && req.headers.accept.includes('text/html') && !req.query.ready) {
+    return res.render('prediction-loader', {
+      layout: false,
+      title: 'Predicting Outbreak',
+      language,
+      activeTab: 'prediction'
+    });
+  }
+
   // Execute Python script to compute redzones and generate map
   const { spawn } = require('child_process');
   const py = spawn('python3', ['test.py'], {
@@ -467,14 +477,27 @@ app.get('/outbreak-prediction', requireLogin, async (req, res) => {
 app.get('/community-post', requireLogin, requireRole(['official']), async (req, res) => {
   const language = req.query.lang || 'en';
 
-  const allPosts = await postModel.find().lean();
-  // console.log(allPosts[0].title)
+  const allPosts = await postModel.find().sort({ _id: -1 }).lean();
   res.render('community-post', {
     title: 'Community Post',
     language,
     activeTab: 'community-post',
     thePosts: allPosts,
   });
+});
+
+// Toggle resolved status
+app.post('/community-post/:id/toggle', requireLogin, requireRole(['official']), async (req, res) => {
+  try {
+    const id = req.params.id;
+    const { resolved } = req.body; // boolean or string 'true'/'false'
+    const newVal = typeof resolved === 'string' ? resolved === 'true' : !!resolved;
+    await postModel.findByIdAndUpdate(id, { $set: { resolved: newVal } });
+    return res.json({ success: true });
+  } catch (err) {
+    console.error('toggle resolved error', err);
+    return res.status(500).json({ success: false });
+  }
 });
 
 app.post('/login', async (req, res) => {

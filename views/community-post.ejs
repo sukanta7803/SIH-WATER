@@ -1,74 +1,92 @@
-<!DOCTYPE html>
-<html lang="en">
+<div class="post-head">
+    <h2 class="page-title">Community Posts</h2>
+    <p class="subtitle">Field reports and advisories. Use the controls to mark posts as resolved or active.</p>
+</div>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="/css/community-post.css">
-</head>
+<div class="all-posts">
+    <% if ((thePosts || []).length === 0) { %>
+        <div class="no-posts">No posts yet.</div>
+    <% } %>
+    <% for (const e of thePosts) { %>
+        <article class="post-card <%= e.resolved ? 'is-resolved' : '' %>" data-id="<%= e._id %>">
+            <header class="post-card-header">
+                <div class="title-wrap">
+                    <h2 class="post-title"><%= e.title %></h2>
+                    <span class="badge <%= e.type %>"><%= e.type %></span>
+                    <% if (e.resolved) { %>
+                        <span class="status-badge">Resolved</span>
+                    <% } else { %>
+                        <span class="status-badge active">Active</span>
+                    <% } %>
+                </div>
+                <div class="region-meta"><i class="fas fa-map-marker-alt"></i> <%= e.region %></div>
+            </header>
 
-<body>
-    <div class="post-head">
-        <h1>Community Posts</h1>
-    </div>
+            <section class="post-body">
+                <p><%= e.body %></p>
+            </section>
 
-    <div class="all-posts">
-        <% for (const e of thePosts) { %>
-            <div class="cardContent">
-
-                <div class="postCard">
-                    <div class="postTitle">
-                        <h2>
-                            <%= e.title %>
-                        </h2>
-                        <div class="postType">
-                            <p class="yellow">
-                                <%= e.type %>
-                            </p>
-                        </div>
-                        <div class="region">
-                            <p>Region: <%= e.region %>
-                            </p>
-                        </div>
-                    </div>
-                    <div class="desc">
-                        <%= e.body %>
-                    </div>
-
-                    <div class="tags">
-                        <div class="symtoms">
-                            <h3>Symtoms: </h3>
-                            <div class="symtomBox">
-                                <% for(let i=0; i < e.symptoms.length; i++){ %>
-                                    <div class="stags">
-                                        <%= e.symptoms[i] %>
-                                    </div>
-                                    <% } %>
-                            </div>
-                        </div>
-                        <div class="water-source">
-                            <h3>Main Water Source: </h3>
-                            <p>
-                                <%= e.waterSource %>
-                            </p>
-                        </div>
-                        <div class="affected-count">
-                            <h3>Total affected Count: </h3>
-                            <p>
-                                <%= e.affectedCount %>
-                            </p>
-                        </div>
+            <section class="post-meta-grid">
+                <div>
+                    <h3>Symptoms</h3>
+                    <div class="chips">
+                        <% (e.symptoms || []).forEach(function(s){ %>
+                            <span class="chip"><%= s %></span>
+                        <% }) %>
                     </div>
                 </div>
-            </div>
-            <div class="resolved">
-                <button>
-                    Resolved
-                </button>
-            </div>
-        <% } %>
-    </div>
-</body>
+                <div>
+                    <h3>Main Water Source</h3>
+                    <p class="kv"><i class="fas fa-tint"></i> <%= e.waterSource %></p>
+                </div>
+                <div>
+                    <h3>Total Affected</h3>
+                    <p class="kv"><i class="fas fa-users"></i> <%= e.affectedCount %></p>
+                </div>
+            </section>
 
-</html>
+            <footer class="post-card-actions">
+                <% if (!e.resolved) { %>
+                <button class="btn resolve" data-action="resolve">Mark as Resolved</button>
+                <% } else { %>
+                <button class="btn unresolve" data-action="unresolve">Mark as Active</button>
+                <% } %>
+            </footer>
+        </article>
+    <% } %>
+</div>
+
+<script>
+// Toggle resolved/unresolved via API
+document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('button.btn');
+    if (!btn) return;
+    const card = btn.closest('.post-card');
+    const id = card?.getAttribute('data-id');
+    const action = btn.getAttribute('data-action');
+    if (!id || !action) return;
+    const resolved = action === 'resolve';
+    btn.disabled = true;
+    try {
+        const res = await fetch(`/community-post/${id}/toggle`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ resolved })
+        });
+        if (res.ok) {
+            card.classList.toggle('is-resolved', resolved);
+            const footer = card.querySelector('.post-card-actions');
+            footer.innerHTML = resolved
+                ? '<button class="btn unresolve" data-action="unresolve">Mark as Active</button>'
+                : '<button class="btn resolve" data-action="resolve">Mark as Resolved</button>';
+            const status = card.querySelector('.status-badge');
+            status.textContent = resolved ? 'Resolved' : 'Active';
+            status.classList.toggle('active', !resolved);
+        }
+    } catch (err) {
+        console.error('toggle failed', err);
+    } finally {
+        btn.disabled = false;
+    }
+});
+</script>

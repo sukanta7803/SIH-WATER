@@ -8,7 +8,8 @@ const postSchema = new Schema({
     symptoms: [String],
     type: String,
     waterSource: String,
-    affectedCount: String
+    affectedCount: String,
+    resolved: { type: Boolean, default: false }
 });
 
 const postModel = mongoose.model('posts', postSchema)
