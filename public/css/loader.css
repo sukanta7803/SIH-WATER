@@ -23,7 +23,7 @@ body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Ro
 .robot-body{ position:absolute; top:72px; left:50%; transform: translateX(-50%); width: 140px; height: 70px; background:#fff; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border:1px solid #e5e7eb; display:grid; place-items: center; }
 .chest{ width: 60px; height: 14px; background: var(--primary); border-radius: 8px; box-shadow: 0 0 0 6px rgba(37,99,235,0.15); animation: pulse 1.5s infinite; }
 
-.wheel{ position:absolute; bottom:0; left:50%; transform: translate(-50%, 12px); width: 90px; height: 24px; background: #111827; border-radius: 12px; box-shadow: inset 0 -6px 0 rgba(255,255,255,0.15); animation: roll 1.5s linear infinite; }
+.wheel{ position:absolute; bottom:185px; left:50%; transform: translate(-50%, 12px); width: 90px; height: 24px; background: #111827; border-radius: 12px; box-shadow: inset 0 -6px 0 rgba(255,255,255,0.15); animation: roll 1.5s linear infinite; }
 
 @keyframes blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
 @keyframes pulse { 0%, 100% { transform: scale(1); opacity: .9; } 50% { transform: scale(1.06); opacity: 1; } }
