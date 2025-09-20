@@ -73,9 +73,11 @@
 
                 <div class="form-group">
                     <div class="form-group">
+                        
                         <label class="form-label required" for="publicPassword">Password</label>
                         <input type="password" id="publicPassword" class="form-input"
                             placeholder="Create a strong password" required>
+                        <img width = "20px" src="/images/eye-off.svg" id="togglePassword" class="toggle-password" alt="Toggle Password">
                         <div class="password-strength" id="publicPasswordStrength"></div>
                         <div class="error-message" id="publicPasswordError">Password must be at least 8 characters with
                             uppercase, lowercase, number and special character</div>
@@ -117,6 +119,7 @@
                     <label class="form-label required" for="officialPassword">Password</label>
                     <input type="password" id="officialPassword" class="form-input" placeholder="Enter your password"
                         required>
+                    <img width = "20px" src="/images/eye-off.svg" id="togglePassword" class="toggle-password-off" alt="Toggle Password">
                     <div class="error-message" id="officialPasswordError">Please enter your password</div>
                 </div>
 

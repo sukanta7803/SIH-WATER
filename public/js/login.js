@@ -87,3 +87,32 @@ function animateDrops() {
     drops.forEach((drop, index) => { drop.style.animationDelay = `${index * 0.5}s`; });
 }
 animateDrops();
+
+//toggle password
+let ibtn1 = document.querySelector(".toggle-password")
+document.querySelector(".toggle-password").addEventListener("click", ()=>{
+    const elem = document.getElementById("publicPassword")
+    
+    if(elem.type === "text"){
+        ibtn1.src = "/images/eye-off.svg"
+        elem.type = "password"
+    }
+    else{
+        ibtn1.src = "/images/eye.svg"
+        elem.type = "text"
+    }
+})
+
+let ibtn2 = document.querySelector(".toggle-password-off")
+document.querySelector(".toggle-password-off").addEventListener("click", ()=>{
+    const elem = document.getElementById("officialPassword")
+    
+    if(elem.type === "text"){
+        ibtn2.src = "/images/eye-off.svg"
+        elem.type = "password"
+    }
+    else{
+        ibtn2.src = "/images/eye.svg"
+        elem.type = "text"
+    }
+})

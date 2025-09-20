@@ -27,11 +27,13 @@
   if (!window.L) return; // Leaflet not loaded
 
   // Prepare posts with coordinates
-  const posts = <%- JSON.stringify((thePosts || []).map(p => ({
-    title: p && p.title || 'Untitled',
-    lat: (p && typeof p.latitude === 'number') ? p.latitude : (p && p.latitude != null ? Number(p.latitude) : null),
-    lon: (p && typeof p.longitude === 'number') ? p.longitude : (p && p.longitude != null ? Number(p.longitude) : null)
-  }))) %>;
+  const posts = <%- JSON.stringify((thePosts || []).map(function(p) { 
+    return {
+      title: (p && p.title) || 'Untitled',
+      lat: (p && typeof p.latitude === 'number') ? p.latitude : ((p && p.latitude != null) ? Number(p.latitude) : null),
+      lon: (p && typeof p.longitude === 'number') ? p.longitude : ((p && p.longitude != null) ? Number(p.longitude) : null)
+    };
+  })) %>;
 
   const points = (posts || []).filter(p => Number.isFinite(p.lat) && Number.isFinite(p.lon));
   const mapEl = document.getElementById('communityMap');
@@ -54,10 +56,10 @@
   const group = L.featureGroup();
   points.forEach(p => {
     const marker = L.circleMarker([p.lat, p.lon], {
-      radius: 7,
-      color: '#f59e0b', // orange border
+      radius: 10,
+      color: '#ac0707', // orange border
       weight: 2,
-      fillColor: '#f59e0b', // orange fill
+      fillColor: '#ff0000', // orange fill
       fillOpacity: 0.85
     });
     marker.bindPopup(String(p.title || 'Untitled'));

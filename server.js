@@ -479,7 +479,37 @@ app.get('/outbreak-prediction', requireLogin, async (req, res) => {
 app.get('/community-post', requireLogin, requireRole(['official']), async (req, res) => {
   const language = req.query.lang || 'en';
 
-  const allPosts = await postModel.find().sort({ _id: -1 }).lean();
+  const allPosts = await postModel.aggregate([
+    {
+      $addFields: {
+        priority: {
+          $cond: [
+            {
+              $gt: [
+                {
+                  $size: {
+                    $filter: {
+                      input: { $ifNull: ['$symptoms', []] },
+                      as: 'symp',
+                      cond: { $in: ['$symp', ['diarrhea', 'vomiting']] }
+                    }
+                  }
+                },
+                0
+              ]
+            },
+            1,
+            0
+          ]
+        },
+        affectedCountNum: {
+          $convert: { input: '$affectedCount', to: 'int', onError: 0, onNull: 0 }
+        }
+      }
+    },
+    { $sort: { priority: -1, affectedCountNum: -1, _id: -1 } }
+  ]);
+
   res.render('community-post', {
     title: 'Community Post',
     language,
