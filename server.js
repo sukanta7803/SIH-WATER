@@ -437,69 +437,14 @@ app.get('/outbreak-prediction', requireLogin, async (req, res) => {
     });
   }
 
-  // Execute Python script to compute redzones and generate map
-  const { spawn } = require('child_process');
-
-  async function runPythonWithFallback() {
-    const candidates = process.platform === 'win32'
-      ? [
-          { cmd: 'python', args: ['-u', 'test.py'] },
-          { cmd: 'py', args: ['-3', '-u', 'test.py'] },
-          { cmd: 'py', args: ['test.py'] },
-        ]
-      : [
-          { cmd: 'python3', args: ['-u', 'test.py'] },
-          { cmd: 'python', args: ['-u', 'test.py'] },
-        ];
-
-    for (const c of candidates) {
-      try {
-        let stdout = '';
-        let stderr = '';
-        await new Promise((resolve, reject) => {
-          const child = spawn(c.cmd, c.args, {
-            cwd: __dirname,
-            env: { ...process.env, MONGO_URI: process.env.MONGO_URI || '' }
-          });
-          child.stdout.on('data', (d) => { stdout += d.toString(); });
-          child.stderr.on('data', (d) => { stderr += d.toString(); });
-          child.on('error', (err) => reject(err));
-          child.on('close', (code) => {
-            if (code === 0 || stdout.trim()) resolve();
-            else reject(new Error(`exit ${code}: ${stderr}`));
-          });
-        });
-        return { stdout, stderr };
-      } catch (err) {
-        // try next candidate
-        continue;
-      }
-    }
-    return { stdout: '', stderr: 'No suitable Python interpreter found' };
-  }
-
-  const { stdout, stderr } = await runPythonWithFallback();
-
-  if (stderr) {
-    console.error('Python stderr:', stderr);
-  }
-
-  let payload = { redzones: [], mapPath: null };
-  try {
-    if (stdout && stdout.trim().startsWith('{')) {
-      payload = JSON.parse(stdout.trim());
-    }
-  } catch (e) {
-    console.error('Failed to parse python output', e);
-  }
-
+  // Skip Python step; client-side code fetches data from /api/disease/hotspots and renders the map
   res.render('outbreak-prediction', {
     title: 'Outbreak Prediction',
     language,
     activeTab: 'prediction',
     alerts: mockData.alerts,
-    redzones: payload.redzones || [],
-    mapPath: payload.mapPath || null
+    redzones: [],
+    mapPath: null
   });
 });
 
