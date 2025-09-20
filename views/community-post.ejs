@@ -3,6 +3,73 @@
     <p class="subtitle">Field reports and advisories. Use the controls to mark posts as resolved or active.</p>
 </div>
 
+<!-- Leaflet CSS/JS for map rendering -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+<style>
+  /* Map container styling */
+  #communityMap {
+    height: 420px;
+    width: 100%;
+    margin: 0 0 1.25rem 0;
+    border: 1px solid #e5e7eb; /* gray-200 */
+    border-radius: 10px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+</style>
+
+<!-- Map goes first (just below the navbar) -->
+<div id="communityMap" aria-label="Community posts map"></div>
+
+<script>
+(function initCommunityMap() {
+  if (!window.L) return; // Leaflet not loaded
+
+  // Prepare posts with coordinates
+  const posts = <%- JSON.stringify((thePosts || []).map(p => ({
+    title: p && p.title || 'Untitled',
+    lat: (p && typeof p.latitude === 'number') ? p.latitude : (p && p.latitude != null ? Number(p.latitude) : null),
+    lon: (p && typeof p.longitude === 'number') ? p.longitude : (p && p.longitude != null ? Number(p.longitude) : null)
+  }))) %>;
+
+  const points = (posts || []).filter(p => Number.isFinite(p.lat) && Number.isFinite(p.lon));
+  const mapEl = document.getElementById('communityMap');
+  if (!mapEl) return;
+
+  // Default view (India-centric)
+  const map = L.map(mapEl, { zoomControl: true }).setView([22.9734, 78.6569], 5);
+
+  // Base layer
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+
+  if (points.length === 0) {
+    // Nothing to plot, keep default view
+    return;
+  }
+
+  const group = L.featureGroup();
+  points.forEach(p => {
+    const marker = L.circleMarker([p.lat, p.lon], {
+      radius: 7,
+      color: '#f59e0b', // orange border
+      weight: 2,
+      fillColor: '#f59e0b', // orange fill
+      fillOpacity: 0.85
+    });
+    marker.bindPopup(String(p.title || 'Untitled'));
+    marker.addTo(group);
+  });
+  group.addTo(map);
+  try {
+    map.fitBounds(group.getBounds().pad(0.25));
+  } catch (_) { /* ignore fit errors */ }
+})();
+</script>
+
 <div class="all-posts">
     <% if ((thePosts || []).length === 0) { %>
         <div class="no-posts">No posts yet.</div>

@@ -26,6 +26,16 @@
         </div>
 
         <div class="form-group">
+            <label for="locationDisplay" class="form-label">
+                <i class="fas fa-location-arrow"></i>
+                Location
+            </label>
+            <input type="text" id="locationDisplay" class="form-input" placeholder="Detecting location..." readonly>
+            <input type="hidden" id="latitude" name="latitude">
+            <input type="hidden" id="longitude" name="longitude">
+        </div>
+
+        <div class="form-group">
             <label for="postBody" class="form-label">
                 <i class="fas fa-align-left"></i>
                 Message
@@ -114,3 +124,44 @@
             <!-- </div> -->
     </form>
 </div>
+
+<script>
+(function() {
+  function setLocation(lat, lon) {
+    var latInput = document.getElementById('latitude');
+    var lonInput = document.getElementById('longitude');
+    var display = document.getElementById('locationDisplay');
+    if (!latInput || !lonInput || !display) return;
+    latInput.value = lat;
+    lonInput.value = lon;
+    try { display.value = lat.toFixed(6) + ', ' + lon.toFixed(6); } catch (e) { display.value = lat + ', ' + lon; }
+  }
+
+  var display = document.getElementById('locationDisplay');
+  if (!display) return;
+  if ('geolocation' in navigator) {
+    navigator.geolocation.getCurrentPosition(function(pos) {
+      var lat = pos && pos.coords ? pos.coords.latitude : null;
+      var lon = pos && pos.coords ? pos.coords.longitude : null;
+      if (lat != null && lon != null) {
+        setLocation(lat, lon);
+        // Optional: also log to backend for audit
+        try {
+          fetch('/log-location', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ latitude: lat, longitude: lon })
+          });
+        } catch (_) {}
+      } else {
+        display.value = 'Unable to detect location';
+      }
+    }, function(err) {
+      display.value = 'Location permission denied or unavailable';
+      console.error('Geolocation error:', err);
+    });
+  } else {
+    display.value = 'Geolocation not supported';
+  }
+})();
+</script>

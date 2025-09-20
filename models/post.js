@@ -9,7 +9,9 @@ const postSchema = new Schema({
     type: String,
     waterSource: String,
     affectedCount: String,
-    resolved: { type: Boolean, default: false }
+    resolved: { type: Boolean, default: false },
+    latitude: Number,
+    longitude: Number,
 });
 
 const postModel = mongoose.model('posts', postSchema)

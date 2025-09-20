@@ -184,7 +184,7 @@ app.post('/report', requireLogin, requireRole(['general']), async (req, res) => 
   const language = req.query.lang || 'en';
   // Process the report data here
   // console.log(req.body);
-  const { title, region, body, symptoms, type, waterSource, affectedCount } = req.body
+  const { title, region, body, symptoms, type, waterSource, affectedCount, latitude, longitude } = req.body
 
   const post = new postModel({
     title: title,
@@ -193,7 +193,9 @@ app.post('/report', requireLogin, requireRole(['general']), async (req, res) => 
     symptoms: symptoms,
     type: type,
     waterSource: waterSource,
-    affectedCount: affectedCount
+    affectedCount: affectedCount,
+    latitude: latitude ? Number(latitude) : undefined,
+    longitude: longitude ? Number(longitude) : undefined
   })
 
   await post.save()
@@ -536,6 +538,16 @@ app.post('/login', async (req, res) => {
     return res.status(500).json({ success: false, message: 'Internal server error' });
   }
 });
+
+app.post('/log-location', (req, res) => {
+  const { latitude, longitude } = req.body;
+  console.log("User location received:");
+  console.log("Latitude:", latitude);
+  console.log("Longitude:", longitude);
+
+  res.json({ success: true, message: "Location logged in backend console" });
+});
+
 
 app.get('/logout', (req, res) => {
   req.session.destroy(() => {
