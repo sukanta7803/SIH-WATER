@@ -439,19 +439,46 @@ app.get('/outbreak-prediction', requireLogin, async (req, res) => {
 
   // Execute Python script to compute redzones and generate map
   const { spawn } = require('child_process');
-  const py = spawn('python3', ['test.py'], {
-    cwd: __dirname,
-    env: { ...process.env, MONGO_URI: process.env.MONGO_URI || '' }
-  });
 
-  let stdout = '';
-  let stderr = '';
+  async function runPythonWithFallback() {
+    const candidates = process.platform === 'win32'
+      ? [
+          { cmd: 'python', args: ['-u', 'test.py'] },
+          { cmd: 'py', args: ['-3', '-u', 'test.py'] },
+          { cmd: 'py', args: ['test.py'] },
+        ]
+      : [
+          { cmd: 'python3', args: ['-u', 'test.py'] },
+          { cmd: 'python', args: ['-u', 'test.py'] },
+        ];
 
-  await new Promise((resolve) => {
-    py.stdout.on('data', (data) => { stdout += data.toString(); });
-    py.stderr.on('data', (data) => { stderr += data.toString(); });
-    py.on('close', () => resolve());
-  });
+    for (const c of candidates) {
+      try {
+        let stdout = '';
+        let stderr = '';
+        await new Promise((resolve, reject) => {
+          const child = spawn(c.cmd, c.args, {
+            cwd: __dirname,
+            env: { ...process.env, MONGO_URI: process.env.MONGO_URI || '' }
+          });
+          child.stdout.on('data', (d) => { stdout += d.toString(); });
+          child.stderr.on('data', (d) => { stderr += d.toString(); });
+          child.on('error', (err) => reject(err));
+          child.on('close', (code) => {
+            if (code === 0 || stdout.trim()) resolve();
+            else reject(new Error(`exit ${code}: ${stderr}`));
+          });
+        });
+        return { stdout, stderr };
+      } catch (err) {
+        // try next candidate
+        continue;
+      }
+    }
+    return { stdout: '', stderr: 'No suitable Python interpreter found' };
+  }
+
+  const { stdout, stderr } = await runPythonWithFallback();
 
   if (stderr) {
     console.error('Python stderr:', stderr);
